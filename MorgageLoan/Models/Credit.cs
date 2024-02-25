@@ -14,7 +14,7 @@ namespace MorgageLoan.Models
         public decimal FirstFloor {  get; set; } //сумма первоначального взноса в единице валюты
         [Column(TypeName = "decimal(18, 2)")]
         public decimal? MonthlyPayment { get; set; }  //ежемесячный платеж
-        public int CreditTerm { get; set; } = 1;//срок кредита в годах
+        public int MorgageTerm { get; set; } = 1;//срок кредита в годах
         public DateTime? CreateOn { get; set; }= DateTime.Now;//дата создания кредита. Потом будет разбавляться другими временами
 
     }

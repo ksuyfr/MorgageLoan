@@ -15,7 +15,7 @@ namespace MorgageLoan.Mappers
                 InterestRate = creditModel.InterestRate,
                 FirstFloor = creditModel.FirstFloor,
                 MonthlyPayment = creditModel.MonthlyPayment,
-                CreditTerm = creditModel.CreditTerm,
+                MorgageTerm = creditModel.MorgageTerm,
             };
         }
 
@@ -29,7 +29,7 @@ namespace MorgageLoan.Mappers
                 FirstPercent = creditDto.FirstPercent,
                 FirstFloor = creditDto.FirstFloor,
                 MonthlyPayment = creditDto.MonthlyPayment,
-                CreditTerm = creditDto.CreditTerm,
+                MorgageTerm = creditDto.MorgageTerm,
                 CreateOn = creditDto.CreateOn,
             };
         }

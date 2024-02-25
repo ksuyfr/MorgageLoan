@@ -57,7 +57,7 @@ namespace MorgageLoan.Repository
             existingCredit.FirstPercent = creditDto.FirstPercent;
             existingCredit.FirstFloor = creditDto.FirstFloor;
             existingCredit.MonthlyPayment = creditDto.MonthlyPayment;
-            existingCredit.CreditTerm = creditDto.CreditTerm;
+            existingCredit.MorgageTerm = creditDto.MorgageTerm;
             existingCredit.CreateOn = creditDto.CreateOn;
 
             await _context.SaveChangesAsync();

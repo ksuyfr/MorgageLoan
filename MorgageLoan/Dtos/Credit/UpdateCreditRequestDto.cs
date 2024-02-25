@@ -22,7 +22,7 @@ namespace MorgageLoan.Dtos.Credit
         public decimal? MonthlyPayment { get; set; }  //ежемесячный платеж
         [Required]
         [Range(1, 50)]
-        public int CreditTerm { get; set; } = 1;//срок кредита в годах
+        public int MorgageTerm { get; set; } = 1;//срок кредита в годах
         public DateTime? CreateOn { get; set; } = DateTime.Now;//дата создания кредита. Потом будет разбавляться другими временами
 
     }
