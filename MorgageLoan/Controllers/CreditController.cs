@@ -4,6 +4,16 @@ using MorgageLoan.Data;
 using MorgageLoan.Dtos.Credit;
 using MorgageLoan.Interfaces;
 using MorgageLoan.Mappers;
+using MorgageLoan.Models;
+using System.Reflection.Metadata;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using System.Globalization;
+using System.Net;
+using System.IO;
+using System.Net.Http.Headers;
+using System.Net.Http;
 
 namespace MorgageLoan.Controllers
 {
@@ -139,13 +149,87 @@ namespace MorgageLoan.Controllers
         {
             TestFirstFeeDto testFirstFeeDto = new TestFirstFeeDto();
             testFirstFeeDto.FullCoast = checkInput.FullCoast;
-            testFirstFeeDto.FirstPercent = (double)Math.Round(Decimal.Divide(checkInput.FirstFloor, checkInput.FullCoast) * 100, 2,
+            testFirstFeeDto.FirstPercent = Math.Round(Decimal.Multiply(Decimal.Divide(checkInput.FirstFloor, checkInput.FullCoast), 100), 2,
                 MidpointRounding.ToZero);
-            testFirstFeeDto.FirstFloor = (decimal)((double)checkInput.FullCoast * (checkInput.FirstPercent) / 100);
+            testFirstFeeDto.FirstFloor = (checkInput.FullCoast * (checkInput.FirstPercent) / 100);
 
             return Ok(testFirstFeeDto);
         }
 #endif
+        [HttpGet("CalcAnnuityPayment")]
+        public IActionResult CalcAnnuityPayment([FromQuery] CalcAnnuityPaymentDto calcPayment )
+        {
+            AnnuityPayments annuityPayments = new AnnuityPayments(calcPayment.InterestRate, calcPayment.MorgageTerm,
+                Decimal.Subtract(calcPayment.FullCoast, calcPayment.FirstFloor));
+            // annuityPayments.PaymentShedulesGenerate();
+            return Ok(annuityPayments.MonthlyPayment);
+        }
+
+        [HttpGet("AnnuityPaymentPDF")]
+        public IActionResult AnnuityPaymentPDF([FromQuery] CalcAnnuityPaymentDto calcPayment)
+        {
+            AnnuityPayments annuityPayments = new AnnuityPayments(calcPayment.InterestRate, calcPayment.MorgageTerm,
+                Decimal.Subtract(calcPayment.FullCoast, calcPayment.FirstFloor));
+            annuityPayments.PaymentShedulesGenerate();
+
+            var format = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            format.NumberGroupSeparator = " ";
+            QuestPDF.Settings.License = LicenseType.Enterprise;
+            QuestPDF.Fluent.Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Margin(50);
+                    page.Size(PageSizes.A4);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x.FontSize(16));
+
+                    page.Header()
+                    .AlignCenter()
+                    .Text("Shedule payment")
+                    .SemiBold().FontSize(24).FontColor(Colors.Blue.Darken3);
+
+                    page.Content()
+                    .Table(table =>
+                    {
+                        table.ColumnsDefinition(columns =>
+                        {
+                            columns.RelativeColumn();
+                            columns.RelativeColumn();
+                            columns.RelativeColumn();
+                        });
+
+                        table.Header(header =>
+                        {
+                            header.Cell().AlignLeft().Text("Balance Owed");
+                            header.Cell().AlignCenter().Text("PerCent Path");
+                            header.Cell().AlignRight().Text("Basic Path");
+                        });
+
+                        foreach (var item in annuityPayments.GetPaymentSchedule())
+                        {
+                            table.Cell().AlignLeft().Text(item.BalanceOwed.ToString("#,#.00", format));
+                            table.Cell().AlignCenter().Text(item.PerCentPath.ToString("#,#.00", format));
+                            table.Cell().AlignRight().Text(item.BasicPath.ToString("#,#.00", format));
+                        }
+                    });
+
+                });
+            }).GeneratePdf("AnnuityShedule.pdf");
+
+            //FileContentResult
+            //string path = "AnnuityShedule.pdf";
+            //byte[] fileContent = System.IO.File.ReadAllBytes(path);
+            //return new FileContentResult(fileContent, "application/pdf");
+
+
+            //var stream = new FileStream(@"AnnuityShedule.pdf", FileMode.Open);
+            //return new FileStreamResult(stream, "application/pdf");
+
+            var stream = new FileStream(@"AnnuityShedule.pdf", FileMode.Open);
+            return File(stream, "application/pdf", "AnnuityShedule.pdf"); //"AnnuityShedule.ext"
+
+        }
 
     }
  }

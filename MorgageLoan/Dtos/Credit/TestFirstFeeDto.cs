@@ -11,7 +11,7 @@ namespace MorgageLoan.Dtos.Credit
 
         [Required]
         [Range(0, 100)]
-        public double FirstPercent { get; set; } //процент первоначального взноса
+        public decimal FirstPercent { get; set; } //процент первоначального взноса
         [Required]
         [Range(1, 100000000)]
         public decimal FirstFloor { get; set; } //сумма первоначального взноса в единице валюты

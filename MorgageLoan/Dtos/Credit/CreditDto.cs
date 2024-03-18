@@ -14,7 +14,7 @@ namespace MorgageLoan.Dtos.Credit
         public decimal FullCoast { get; set; } = decimal.Zero; //полная стоимость цели кредита
         [Required]
         [Range(0, 100)]
-        public double InterestRate { get; set; } = 0.01; //процентная ставка
+        public decimal InterestRate { get; set; } = 0.01M; //процентная ставка
         [Required]
         [Range(1, 100000000)]
         public decimal FirstFloor { get; set; } //сумма первоначального взноса в единице валюты

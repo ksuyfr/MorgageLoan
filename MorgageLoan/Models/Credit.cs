@@ -8,8 +8,8 @@ namespace MorgageLoan.Models
         public string? CreditName { get; set; } = string.Empty; //Название кредита. Можно записать цель
         [Column(TypeName ="decimal(18, 2)")]
         public decimal FullCoast { get; set; } = decimal.Zero; //полная стоимость цели кредита
-        public double InterestRate { get; set; } = 0.01; //процентная ставка
-        public double? FirstPercent { get; set; } //процент первоначального взноса
+        public decimal InterestRate { get; set; } = 0.01M; //процентная ставка
+        public decimal? FirstPercent { get; set; } //процент первоначального взноса
         [Column(TypeName = "decimal(18, 2)")]
         public decimal FirstFloor {  get; set; } //сумма первоначального взноса в единице валюты
         [Column(TypeName = "decimal(18, 2)")]
